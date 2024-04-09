@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HTTP</title>
+    <style>
+        .send {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-top: .5rem;
+            border: 0;
+            border-radius: 2px;
+            padding: 20px;
+        }
+        .btn-container{
+            text-align: center;
+        }
+        .app {
+            font-size: 1.5rem;
+            text-align: center;
+            font-family: monospace;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background-color: burlywood;
+        }
+        .resp {
+            white-space: pre-wrap;
+        }
+        textarea{
+            font-size: 2rem;
+            resize: none;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <h2>Host: {{ data["hostname"] + ":" + data["port"] }}</h2>
+        <h3>HTTP Request:</h3>
+        <form action="/" method="post">
+            <textarea name="req" cols="40" rows="20">{{ data["req"] }}</textarea>
+            <div class="btn-container">
+                <input class="send" type="submit" value="Send request">
+            </div>
+        </form>
+        <h3>HTTP Response:</h3>
+        <textarea disabled name="req" cols="40" rows="15">{{ data["res"] }}</textarea>
+    </div>
+</body>
+</html>
