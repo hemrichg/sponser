@@ -7,7 +7,7 @@
         .send {
             font-size: 2rem;
             font-weight: bold;
-            margin-top: .5rem;
+            margin-top: 2rem;
             border: 0;
             border-radius: 2px;
             padding: 20px;
@@ -30,18 +30,38 @@
         textarea{
             font-size: 2rem;
             resize: none;
+            outline: none;
         }
         form {
             display: flex;
             flex-direction: column;
             text-align: center;
         }
+        .head {
+            text-align: left;
+        }
+        .info {
+            text-align: center;
+        }
+        .user {
+            text-align: center;
+            margin: 1.5rem;
+            width: 20rem;
+            background-color: hsl(34, 57%, 40%);
+        }
     </style>
 </head>
 <body>
     <div class="app">
-        <h2>Host: {{ data["hostname"] + ":" + data["port"] }}</h2>
-        <h3>HTTP Request:</h3>
+        <div class="head">
+            <div class="user">
+                <p>{{ data["user"] + "@" + data["cl"] }}</p>
+            </div>
+            <div class="info">
+                <h2>Host: {{ data["hostname"] + ":" + data["port"] }}</h2>
+                <h3>HTTP Request:</h3>
+            </div>
+        </div>
         <form action="/" method="post">
             <textarea name="req" cols="40" rows="20">{{ data["req"] }}</textarea>
             <div class="btn-container">
@@ -49,7 +69,7 @@
             </div>
         </form>
         <h3>HTTP Response:</h3>
-        <textarea disabled name="req" cols="40" rows="15">{{ data["res"] }}</textarea>
+        <textarea disabled name="req" cols="40" rows="20">{{ data["res"] }}</textarea>
     </div>
 </body>
 </html>

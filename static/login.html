@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HTTP</title>
+    <style>
+        .send {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-top: 2rem;
+            border: 0;
+            border-radius: 2px;
+            padding: 20px;
+        }
+        .btn-container{
+            text-align: center;
+            margin-top: 3rem;
+        }
+        .input-container {
+            text-align: center;
+        }
+        .app {
+            font-size: 1.5rem;
+            text-align: center;
+            font-family: monospace;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background-color: burlywood;
+            height: 100vh;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            text-align: center;
+        }
+        input {
+            text-align: center;
+            width: 30rem;
+            margin: auto;
+        }
+        input[type=text] {
+            padding: .8rem;
+        }
+        input:focus {
+            outline: none;
+        }
+        .field-container {
+            display: flex;
+            flex-direction: column;
+            margin-top: 1.5rem;
+        }
+        .text-input {
+            font-size: 2rem;
+            margin-top: .5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <form action="/login" method="post">
+            <div class="input-container">
+                <div class="field-container">
+                    <label for="user">Username:</label>
+                    <input class="text-input" type="text" name="username" id="user" maxlength="20">
+                </div>
+                <div class="field-container">
+                    <label for="password">Password:</label>
+                    <input class="text-input" type="text" name="password" id="password" maxlength="10">
+                </div>
+            </div>
+            <div class="btn-container">
+                <input class="send" type="submit" value="Login">
+            </div>
+        </form>
+    </div>
+</body>
+</html>
