@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from flask import Flask, request, render_template, redirect, make_response
 
 from config.target_conf import target_host
-from utils.nc import netcat
+from utils.nc import get_response_for
 from utils.other import log, get_user_by_token, get_token_for_user
 
 # target_host example:
@@ -25,18 +25,22 @@ def root():
 
     if request.method == "POST":
         req = request.form["req"]
-        res = netcat(target_host["hostname"], target_host["port"], req)
+        res = get_response_for(req)
 
-        log(cl, u_name, req, res)
+        log(cl, u_name, req, res["raw"])
 
         return render_template("http.html", data={**target_host,
+                                                  **res,
                                                     "req": req,
-                                                    "res": res,
                                                     "user": u_name,
                                                     "cl": cl})
+                                                    
     return render_template("http.html", data={**target_host,
                                                 "req" : "",
-                                                "res": "",
+                                                "raw": "",
+                                                "r_line": "",
+                                                "header": "",
+                                                "body": "",
                                                 "user": u_name,
                                                 "cl": cl})
 

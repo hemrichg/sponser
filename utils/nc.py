@@ -1,5 +1,8 @@
 import socket
 
+from config.target_conf import target_host
+
+
 def netcat(hostname, port, content):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((hostname, int(port)))
@@ -23,3 +26,28 @@ def netcat(hostname, port, content):
 
     str_data = b_data.decode("utf-8")
     return str_data
+
+def split_response(response):
+    parts = response.split("\r\n\r\n")
+    rows = parts[0].split("\r\n")
+    
+    if len(parts) == 1:
+        return {
+            "r_line": "",
+            "header": "",
+            "body": parts[0]
+        }
+
+    return {
+        "r_line": rows[0],
+        "header": "\r\n".join(rows[1:]),
+        "body": parts[1] if 1 < len(parts) else ""
+    }
+
+def get_response_for(request):
+    response = netcat(
+        target_host["hostname"],
+        target_host["port"], 
+        request)
+        
+    return {**split_response(response), "raw": response}

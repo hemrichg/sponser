@@ -49,7 +49,79 @@
             width: 20rem;
             background-color: hsl(34, 57%, 40%);
         }
+        #response-parts {
+            text-align: left;
+            max-width: 100%;
+            display: hidden;
+            display: none;
+        }
+        code {
+            font-size: 2rem;
+        }
+        .switch-view {
+            text-align: right;
+            margin-right: 3rem;
+            margin-bottom: 1rem;
+        }
+        label {
+            font-size: 2rem;
+        }
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+
+        input:focus + .slider {
+            box-shadow: 0 0 1px #2196F3;
+        }
+
+        input:checked + .slider:before {
+            -webkit-transform: translateX(26px);
+            -ms-transform: translateX(26px);
+            transform: translateX(26px);
+        }
+
+        #response-parts h4 {
+            margin-left: 3rem;
+        }
     </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
 </head>
 <body>
     <div class="app">
@@ -69,7 +141,45 @@
             </div>
         </form>
         <h3>HTTP Response:</h3>
-        <textarea disabled name="req" cols="40" rows="20">{{ data["res"] }}</textarea>
+        <div class="switch-view">
+            <label class="switch">
+                <input id="sw" type="checkbox" onclick="switchView()">
+                <span class="slider"></span>
+            </label>
+        </div>
+        <textarea id="response-raw" disabled name="req" cols="40" rows="20">{{ data["raw"] }}</textarea>
+            <div id="response-parts">
+                <h4>Response line:</h4>
+                <pre>
+                    <code>
+{{ data["r_line"] }}
+                    </code>
+                </pre>
+                <h4>Header:</h4>
+                <pre>
+                    <code>
+{{ data["header"] }}
+                    </code>
+                </pre>
+                <h4>Body:</h4>
+                <pre>
+                    <code>
+{{ data["body"] }}
+                    </code>
+            </div>
     </div>
+    <script>
+        function switchView() {
+
+        var chboxs = document.getElementById("sw");
+        var resRaw = document.getElementById("response-raw");
+        var resParts = document.getElementById("response-parts");
+
+        resParts.style.display = chboxs.checked ? "block" : "none";
+        resRaw.style.display = chboxs.checked ? "none" : "block";
+    }
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
 </body>
 </html>
