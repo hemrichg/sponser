@@ -49,7 +49,17 @@
             </div>
         </form>
         <h3>HTTP Response:</h3>
-        <textarea disabled name="req" cols="40" rows="15">{{ data["res"] }}</textarea>
+        <textarea id="res" disabled name="req" cols="40" rows="15">{{ data["res"] }}</textarea>
     </div>
+
+    <script>
+        var textarea = document.getElementById("res");
+        var text = textarea.value;
+        text = text.split('\\n').join(String.fromCharCode(10));
+        document.getElementById("res").value = text;
+</script>
 </body>
+
+
+
 </html>

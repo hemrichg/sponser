@@ -23,7 +23,7 @@ def netcat(hostname, port, content):
     s.close()
 
     r_data = r_data[1:][:-1]
-    r_data = r_data.replace("\r\n\r\n\'\'", "\r\n\r\n")
+    r_data = r_data.replace(r"\r\n", r"\n")
     return r_data
 
 @app.route("/", methods=["GET", "POST"])
