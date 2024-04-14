@@ -41,7 +41,8 @@ def split_response(response):
     return {
         "r_line": rows[0],
         "header": "\r\n".join(rows[1:]),
-        "body": parts[1] if 1 < len(parts) else ""
+        "body": parts[1] if 1 < len(parts) < 3 else
+                parts[1:]if 3 < len(parts) else ""
     }
 
 def get_response_for(request):
