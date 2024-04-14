@@ -1,183 +1,203 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>HTTP</title>
     <style>
-        .send {
-            font-size: 2rem;
-            font-weight: bold;
-            margin-top: 2rem;
-            border: 0;
-            border-radius: 2px;
-            padding: 20px;
-        }
-        .btn-container{
-            text-align: center;
-        }
-        .app {
-            font-size: 1.5rem;
-            text-align: center;
-            font-family: monospace;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            background-color: burlywood;
-        }
-        .resp {
-            white-space: pre-wrap;
-        }
-        textarea{
-            font-size: 2rem;
+        textarea[id="response-raw"] {
+            background-color: rgb(236, 236, 236);
             resize: none;
-            outline: none;
         }
-        form {
-            display: flex;
-            flex-direction: column;
-            text-align: center;
-        }
-        .head {
-            text-align: left;
-        }
-        .info {
-            text-align: center;
-        }
-        .user {
-            text-align: center;
-            margin: 1.5rem;
+
+        input[type="range"] {
+            background-color: rgb(228, 228, 228);
+            padding: 4px;
             width: 20rem;
-            background-color: hsl(34, 57%, 40%);
-        }
-        #response-parts {
-            text-align: left;
-            max-width: 100%;
-            display: hidden;
-            display: none;
-        }
-        code {
-            font-size: 2rem;
-        }
-        .switch-view {
-            text-align: right;
-            margin-right: 3rem;
-            margin-bottom: 1rem;
-        }
-        label {
-            font-size: 2rem;
-        }
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 60px;
-            height: 34px;
+            height: 2rem;
+            border-radius: .5rem;
+            overflow: hidden;
+            cursor: row-resize;
+
+            &[step] {
+                background-color: rgb(255, 255, 255);
+            }
+
+            &::-webkit-slider-thumb {
+                -webkit-appearance: none;
+                background-color: rgb(255, 255, 255);
+                box-shadow: -20rem 0 0 20rem rgba(#000000, 0.2);
+            }
+
+            &::-moz-range-thumb {
+                border-radius: .5rem;
+                border: 0;
+                width: 20px;
+                background-color: rgb(255, 255, 255);
+            }
         }
 
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            -webkit-transition: .4s;
-            transition: .4s;
-        }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 26px;
-            width: 26px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            -webkit-transition: .4s;
-            transition: .4s;
-        }
-
-        input:checked + .slider {
-            background-color: #2196F3;
-        }
-
-        input:focus + .slider {
-            box-shadow: 0 0 1px #2196F3;
-        }
-
-        input:checked + .slider:before {
-            -webkit-transform: translateX(26px);
-            -ms-transform: translateX(26px);
-            transform: translateX(26px);
-        }
-
-        #response-parts h4 {
-            margin-left: 3rem;
+        @media screen and (max-width:900px) {
+            code{
+                text-wrap:balance;
+            }
         }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 </head>
+
 <body>
-    <div class="app">
-        <div class="head">
-            <div class="user">
-                <p>{{ data["user"] + "@" + data["cl"] }}</p>
+    <div class="bg-light min-vh-100 text-center pt-4">
+        <div class="d-block" id="titles">
+            <h5>User: {{ data["user"] + "@" + data["cl"] }}</h5>
+            <h3>Host:</h3>
+            <h3 class="text-danger fs-1">{{ data["hostname"] + ":" + data["port"] }}</h3>
+                <button class="btn p-2 mt-3 border-0 border bg-info rounded-2 text-light" id="reqBtn">Request
+                    eltüntetés</button>
+                <div class="p-3 d-block" id="fontSize">
+                    <p>Betűméret</p>
+                    <input type="range" value="16" min="10" max="20" id="font-size" 1>
+                </div>
+                <div class="form-check form-switch d-flex justify-content-center pt-3">
+                    <label class="form-check-label" for="sw">Response szétszedése</label>
+                    <input class="ms-2 form-check-input" type="checkbox" role="switch" id="sw" onchange="switchView()">
             </div>
-            <div class="info">
-                <h2>Host: {{ data["hostname"] + ":" + data["port"] }}</h2>
+        </div>
+        <div class="d-flex flex-column flex-lg-row gap-4 px-4 py-2">
+            <div class="col d-block" id="reqBlock">
                 <h3>HTTP Request:</h3>
+                <form action="/" method="post">
+                    <textarea name="req" class="border-0 border w-100 rounded-2 p-3" rows="20"
+                        id="req">{{ data["req"] }}</textarea>
+                    <div class="btn-container d-flex justify-content-center">
+                        <input class="btn p-2 mt-3 border-0 border bg-danger rounded-2 text-light d-none" id="btn"
+                            type="submit" value="Send request">
+                    </div>
+                </form>
+            </div>
+            <div class="col">
+                <div class="d-flex justify-content-center">
+                    <h3>HTTP Response:</h3>
+                </div>
+                <textarea class="border-0 border w-100 rounded-2 p-3 d-block" readonly name="res"
+                    id="response-raw">{{ data["raw"] }}</textarea>
+                <div id="response-parts" class="pt-3 d-none">
+                    <h4>Response line:</h4>
+                    <pre >
+                                    <code class="text-start">
+                {{ data["r_line"] }}
+                                    </code>
+                                </pre>
+                    <h4>Header:</h4>
+                    <pre class="text-start">
+                                    <code>
+                {{ data["header"] }}
+                                    </code>
+                                </pre>
+                    <h4>Body:</h4>
+                    <pre class="text-start">
+                                    <code >
+                {{ data["body"] }}
+                                    </code>
+                            </div>
+                    </div>
             </div>
         </div>
-        <form action="/" method="post">
-            <textarea name="req" cols="40" rows="20">{{ data["req"] }}</textarea>
-            <div class="btn-container">
-                <input class="send" type="submit" value="Send request">
-            </div>
-        </form>
-        <h3>HTTP Response:</h3>
-        <div class="switch-view">
-            <label class="switch">
-                <input id="sw" type="checkbox" onclick="switchView()">
-                <span class="slider"></span>
-            </label>
-        </div>
-        <textarea id="response-raw" disabled name="req" cols="40" rows="20">{{ data["raw"] }}</textarea>
-            <div id="response-parts">
-                <h4>Response line:</h4>
-                <pre>
-                    <code>
-{{ data["r_line"] }}
-                    </code>
-                </pre>
-                <h4>Header:</h4>
-                <pre>
-                    <code>
-{{ data["header"] }}
-                    </code>
-                </pre>
-                <h4>Body:</h4>
-                <pre>
-                    <code>
-{{ data["body"] }}
-                    </code>
-            </div>
     </div>
     <script>
+        let textArea = document.querySelector("#response-raw");
+        let sendBtn = document.querySelector('#btn');
+        let slider = document.getElementById('font-size');
+        let request = document.querySelector("#req");
+        let reqBody = document.querySelector("#reqBlock");
+        let reqBtn = document.querySelector("#reqBtn");
+        let controller = document.querySelector("#controller")
+        document.getElementById("sw").checked = false;
+        
         function switchView() {
+            var chboxs = document.getElementById("sw");
+            var resRaw = document.getElementById("response-raw");
+            var resParts = document.getElementById("response-parts");
+            var fontSize = document.getElementById("fontSize")
 
-        var chboxs = document.getElementById("sw");
-        var resRaw = document.getElementById("response-raw");
-        var resParts = document.getElementById("response-parts");
+            if (resRaw.classList.contains("d-block")) {
+                resRaw.classList.remove("d-block");
+                resRaw.classList.add("d-none");
+            }
+            else {
+                resRaw.classList.remove("d-none");
+                resRaw.classList.add("d-block");
+            }
 
-        resParts.style.display = chboxs.checked ? "block" : "none";
-        resRaw.style.display = chboxs.checked ? "none" : "block";
-    }
+            if (resParts.classList.contains("d-none")) {
+                resParts.classList.remove("d-none");
+                resParts.classList.add("d-block");
+            }
+            else {
+                resParts.classList.remove("d-block");
+                resParts.classList.add("d-none");  
+            }
+            fontSize.classList = chboxs.checked ? "d-none" : "d-block";
+        }
+
+
+        function autoSize() {
+            var el = textArea;
+            var er = request;
+            setTimeout(function () {
+                el.style.cssText = 'min-height:100vh; height: 37px;';
+                el.style.cssText = 'height:' + (el.scrollHeight + 30) + 'px';
+                er.style.cssText = 'min-height:37px; height: 37px;';
+                er.style.cssText = 'height:' + (er.scrollHeight) + 'px';
+            }, 0);
+        }
+
+        function fontSize() {
+            slider.value = textArea.style.fontSize;
+            slider.addEventListener('input', function () {
+                var size = slider.value;
+                textArea.style.fontSize = size + "px";
+                textArea.style.height = textArea.scrollHeight + 'px';
+            });
+        }
+
+        function requestCheck() {
+            if (request.value.length >= 1) {
+                sendBtn.classList.remove("d-none")
+                sendBtn.classList.add("d-block")
+            }
+            else{
+                sendBtn.classList.remove("d-block")
+                sendBtn.classList.add("d-none")
+            }
+        }
+
+        window.addEventListener('load', () => {
+            autoSize();
+            requestCheck();
+        });
+        request.addEventListener('keyup', () => {
+            autoSize();
+            requestCheck();
+        })
+        sendBtn.addEventListener('click', ()=>{
+            autoSize();
+        });
+        slider.addEventListener('input', fontSize());
+        reqBtn.addEventListener('click', () => {
+            if (reqBody.classList.contains("d-block")) {
+                reqBody.classList.remove("d-block");
+                reqBody.classList.add("d-none");
+                reqBtn.textContent = "Request megjelenítés"
+            }
+            else {
+                reqBody.classList.remove("d-none");
+                reqBody.classList.add("d-block");
+                reqBtn.textContent = "Request eltüntetés"
+            }
+        });
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script>hljs.highlightAll();</script>
