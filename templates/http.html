@@ -10,36 +10,42 @@
             resize: none;
         }
 
-        input[type="range"] {
-            background-color: rgb(228, 228, 228);
-            padding: 4px;
-            width: 20rem;
-            height: 2rem;
-            border-radius: .5rem;
-            overflow: hidden;
-            cursor: row-resize;
+        .slider {
+            width: 70%;
+            background: #d3d3d3;
+            outline: none;
+            -webkit-transition: .2s;
+            transition: opacity .2s;
+            border-radius: 50rem;
+            appearance: none;
+            -webkit-appearance: none;
+        }
 
-            &[step] {
-                background-color: rgb(255, 255, 255);
-            }
+        .slider:hover {
+            opacity: 1;
+        }
 
-            &::-webkit-slider-thumb {
-                -webkit-appearance: none;
-                background-color: rgb(255, 255, 255);
-                box-shadow: -20rem 0 0 20rem rgba(#000000, 0.2);
-            }
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 25px;
+            height: 25px;
+            border: 0;
+            background: #0dcaf0;
+            cursor: pointer;
+        }
 
-            &::-moz-range-thumb {
-                border-radius: .5rem;
-                border: 0;
-                width: 20px;
-                background-color: rgb(255, 255, 255);
-            }
+        .slider::-moz-range-thumb {
+            width: 25px;
+            height: 25px;
+            border: 0;
+            background: #0dcaf0;
+            cursor: pointer;
         }
 
         @media screen and (max-width:900px) {
-            code{
-                text-wrap:balance;
+            code {
+                text-wrap: balance;
             }
         }
     </style>
@@ -54,15 +60,15 @@
             <h5>User: {{ data["user"] + "@" + data["cl"] }}</h5>
             <h3>Host:</h3>
             <h3 class="text-danger fs-1">{{ data["hostname"] + ":" + data["port"] }}</h3>
-                <button class="btn p-2 mt-3 border-0 border bg-info rounded-2 text-light" id="reqBtn">Request
-                    eltüntetés</button>
-                <div class="p-3 d-block" id="fontSize">
-                    <p>Betűméret</p>
-                    <input type="range" value="16" min="10" max="20" id="font-size" 1>
-                </div>
-                <div class="form-check form-switch d-flex justify-content-center pt-3">
-                    <label class="form-check-label" for="sw">Response szétszedése</label>
-                    <input class="ms-2 form-check-input" type="checkbox" role="switch" id="sw" onchange="switchView()">
+            <button class="btn p-2 mt-3 border-0 border bg-info rounded-2 text-light" id="reqBtn">Request
+                eltüntetés</button>
+            <div class="p-3 d-block" id="fontSize">
+                <p>Betűméret</p>
+                <input class="slider" type="range" value="16" min="13" max="40" id="font-size">
+            </div>
+            <div class="form-check form-switch d-flex justify-content-center pt-3">
+                <label class="form-check-label" for="sw">Response szétszedése</label>
+                <input class="ms-2 form-check-input" type="checkbox" role="switch" id="sw" onchange="switchView()">
             </div>
         </div>
         <div class="d-flex flex-column flex-lg-row gap-4 px-4 py-2">
@@ -85,8 +91,8 @@
                     id="response-raw">{{ data["raw"] }}</textarea>
                 <div id="response-parts" class="pt-3 d-none">
                     <h4>Response line:</h4>
-                    <pre >
-                        <code class="text-start">
+                    <pre class="text-start">
+                        <code>
 {{ data["r_line"] }}
                                     </code>
                                 </pre>
@@ -115,7 +121,7 @@
         let reqBtn = document.querySelector("#reqBtn");
         let controller = document.querySelector("#controller")
         document.getElementById("sw").checked = false;
-        
+
         function switchView() {
             var chboxs = document.getElementById("sw");
             var resRaw = document.getElementById("response-raw");
@@ -137,29 +143,32 @@
             }
             else {
                 resParts.classList.remove("d-block");
-                resParts.classList.add("d-none");  
+                resParts.classList.add("d-none");
             }
             fontSize.classList = chboxs.checked ? "d-none" : "d-block";
         }
 
 
         function autoSize() {
-            var el = textArea;
-            var er = request;
-            setTimeout(function () {
-                el.style.cssText = 'min-height:100vh; height: 37px;';
-                el.style.cssText = 'height:' + (el.scrollHeight + 30) + 'px';
-                er.style.cssText = 'min-height:37px; height: 37px;';
-                er.style.cssText = 'height:' + (er.scrollHeight) + 'px';
-            }, 0);
+            let reqText = document.getElementById("req");
+            textArea.style.minHeight = '37px';
+            textArea.style.height = '37px';
+            textArea.style.height = textArea.scrollHeight + 'px';
+            reqText.style.minHeight = '37px';
+            reqText.style.height = '37px';
+            reqText.style.height = reqText.scrollHeight + 'px';
         }
 
         function fontSize() {
+            let reqText = document.getElementById("req");
             slider.value = textArea.style.fontSize;
+            reqText.style.fontSize = slider.value
+
             slider.addEventListener('input', function () {
                 var size = slider.value;
                 textArea.style.fontSize = size + "px";
-                textArea.style.height = textArea.scrollHeight + 'px';
+                reqText.style.fontSize = size + "px";
+                autoSize();
             });
         }
 
@@ -168,21 +177,21 @@
                 sendBtn.classList.remove("d-none")
                 sendBtn.classList.add("d-block")
             }
-            else{
+            else {
                 sendBtn.classList.remove("d-block")
                 sendBtn.classList.add("d-none")
             }
         }
 
         window.addEventListener('load', () => {
-            autoSize();
             requestCheck();
+            autoSize();
         });
         request.addEventListener('keyup', () => {
-            autoSize();
             requestCheck();
+            autoSize();
         })
-        sendBtn.addEventListener('click', ()=>{
+        sendBtn.addEventListener('click', () => {
             autoSize();
         });
         slider.addEventListener('input', fontSize());
@@ -196,6 +205,7 @@
                 reqBody.classList.remove("d-none");
                 reqBody.classList.add("d-block");
                 reqBtn.textContent = "Request eltüntetés"
+                autoSize();
             }
         });
     </script>
